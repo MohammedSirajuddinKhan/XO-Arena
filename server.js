@@ -25,7 +25,7 @@ const io = new Server(server, {
 require("./config/socket")(io);
 
 const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || "::";
+const HOST = process.env.HOST || (process.env.RENDER ? "0.0.0.0" : "::");
 
 server.on("error", (error) => {
   console.error("Server error:", error.message);
