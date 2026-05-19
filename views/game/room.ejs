@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../partials/head") %>
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <main class="center">
+      <h2>Room: <%= room.roomCode %></h2>
+      <h3 id="turn">Turn: <%= room.turn %></h3>
+
+      <div id="board" class="board">
+        <% room.board.forEach((cell,index)=> { %>
+        <div class="cell" data-index="<%= index %>"><%= cell %></div>
+        <% }) %>
+      </div>
+
+      <button id="restartBtn" class="btn">Restart</button>
+    </main>
+
+    <script>
+      const ROOM_CODE = "<%= room.roomCode %>";
+    </script>
+    <script src="/js/socket.js"></script>
+    <script src="/js/game.js"></script>
+  </body>
+</html>

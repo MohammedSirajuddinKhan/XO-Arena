@@ -1,0 +1,74 @@
+GridLock/
+│
+├── config/
+│   ├── db.js
+│   ├── passport.js
+│   ├── socket.js
+│
+├── controllers/
+│   ├── authController.js
+│   ├── gameController.js
+│   └── userController.js
+│
+├── models/
+│   ├── User.js
+│   ├── Game.js
+│   └── Room.js
+│
+├── routes/
+│   ├── authRoutes.js
+│   ├── gameRoutes.js
+│   └── userRoutes.js
+│
+├── middlewares/
+│   ├── authMiddleware.js
+│   ├── errorMiddleware.js
+│   └── uploadMiddleware.js
+│
+├── public/
+│   ├── css/
+│   │   ├── style.css
+│   │   ├── auth.css
+│   │   └── game.css
+│   │
+│   ├── js/
+│   │   ├── main.js
+│   │   ├── socket.js
+│   │   └── game.js
+│   │
+│   ├── images/
+│   │   └── favicon.svg
+│
+├── services/
+│   ├── gameLogic.js
+│   └── roomService.js
+│
+├── utils/
+│   ├── generateRoomCode.js
+│   ├── calculateWinner.js
+│   └── asyncHandler.js
+│
+├── views/
+│   ├── partials/
+│   │   ├── navbar.ejs
+│   │   ├── footer.ejs
+│   │   └── head.ejs
+│   │
+│   ├── auth/
+│   │   ├── login.ejs
+│   │   └── register.ejs
+│   │
+│   ├── game/
+│   │   ├── lobby.ejs
+│   │   ├── room.ejs
+│   │   └── leaderboard.ejs
+│   │
+│   ├── index.ejs
+│   └── error.ejs
+│
+├── .env
+├── .gitignore
+├── app.js
+├── server.js
+├── package.json
+├── README.md
