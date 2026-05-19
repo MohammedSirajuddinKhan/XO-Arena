@@ -8,7 +8,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const MongoStore = require("connect-mongo").default;
 
-require("dotenv").config({ path: path.join(__dirname, ".env") });
+require("dotenv").config();
 
 const connectDB = require("./config/db");
 const passportConfig = require("./config/passport");
@@ -25,8 +25,7 @@ connectDB();
 passportConfig();
 
 app.set("view engine", "ejs");
-const frontendDir = path.join(__dirname, "..", "xo-fe");
-app.set("views", path.join(frontendDir, "views"));
+app.set("views", path.join(__dirname, "views"));
 
 app.set("trust proxy", 1);
 app.use(
@@ -61,7 +60,7 @@ app.use((req, res, next) => {
   clean(req.params);
   next();
 });
-app.use(express.static(path.join(frontendDir, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
   session({
