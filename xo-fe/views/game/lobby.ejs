@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../partials/head") %>
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <main class="lobby">
+      <section class="lobby-hero">
+        <div>
+          <p class="eyebrow">Signed in as <%= playerName %></p>
+          <h1>XOArena Lobby</h1>
+          <p class="lede">Create a private room, share the invite, or jump back into an active match.</p>
+        </div>
+      </section>
+
+      <section class="lobby-grid">
+        <div class="panel">
+          <h2>Create Private Room</h2>
+          <form action="/create-room" method="POST">
+            <button class="btn">Create Room</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <h2>Join via Code</h2>
+          <form action="/join-room" method="POST">
+            <input type="text" name="roomCode" placeholder="Room code" required />
+            <button class="btn">Join Room</button>
+          </form>
+        </div>
+      </section>
+
+      <section>
+        <h2>Active Rooms</h2>
+        <% if(activeRooms.length === 0){ %>
+        <p class="empty">No active rooms yet. Create one and invite a friend.</p>
+        <% } else { %>
+        <div class="room-list">
+          <% activeRooms.forEach((room)=> { %>
+          <a class="room-card" href="/room/<%= room.roomCode %>">
+            <strong><%= room.roomCode %></strong>
+            <span><%= room.status %></span>
+            <small><%= room.players.length %>/2 players</small>
+          </a>
+          <% }) %>
+        </div>
+        <% } %>
+      </section>
+    </main>
+  </body>
+</html>

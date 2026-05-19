@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../partials/head") %>
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <main class="admin-page">
+      <h1>Admin Dashboard</h1>
+      <section class="stats-grid">
+        <div class="panel"><strong><%= totalUsers %></strong><span>Total users</span></div>
+        <div class="panel"><strong><%= rooms.length %></strong><span>Tracked rooms</span></div>
+        <div class="panel"><strong><%= totalMatches %></strong><span>Completed matches</span></div>
+      </section>
+
+      <section class="panel">
+        <h2>Active Rooms</h2>
+        <% if(rooms.length === 0){ %>
+        <p class="empty">No rooms.</p>
+        <% } else { %>
+        <table>
+          <thead>
+            <tr><th>Code</th><th>Status</th><th>Players</th><th></th></tr>
+          </thead>
+          <tbody>
+            <% rooms.forEach((room)=> { %>
+            <tr>
+              <td><%= room.roomCode %></td>
+              <td><%= room.status %></td>
+              <td><%= room.players.map((player)=>player.name).join(", ") || "None" %></td>
+              <td>
+                <form action="/admin/rooms/<%= room._id %>/delete" method="POST">
+                  <button class="btn danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <% } %>
+      </section>
+
+      <section class="panel">
+        <h2>Users</h2>
+        <table>
+          <thead>
+            <tr><th>User</th><th>ELO</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody>
+            <% users.forEach((user)=> { %>
+            <tr>
+              <td><%= user.username %></td>
+              <td><%= user.elo %></td>
+              <td><%= user.isBanned ? "Banned" : "Active" %></td>
+              <td>
+                <% if(!user.isBanned){ %>
+                <form action="/admin/users/<%= user._id %>/ban" method="POST">
+                  <button class="btn danger" type="submit">Ban</button>
+                </form>
+                <% } %>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="panel">
+        <h2>Recent Matches</h2>
+        <div class="match-list">
+          <% finishedMatches.forEach((match)=> { %>
+          <a href="/replay/<%= match._id %>"><%= match.roomCode %> · <%= match.draw ? "Draw" : `${match.winner} won` %></a>
+          <% }) %>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../partials/head") %>
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <main class="profile-page">
+      <section class="profile-card">
+        <img src="<%= user.avatar || '/images/favicon.svg' %>" alt="" />
+        <div>
+          <h1><%= user.username %></h1>
+          <p><%= user.wins %> wins · <%= user.losses %> losses · <%= user.draws %> draws</p>
+          <p>ELO <%= user.elo %> · Best streak <%= user.bestStreak %></p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Avatar</h2>
+        <form action="/profile/avatar" method="POST" enctype="multipart/form-data">
+          <input type="file" name="avatar" accept="image/*" />
+          <button class="btn" type="submit">Upload</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>Recent Matches</h2>
+        <% if(matches.length === 0){ %>
+        <p class="empty">No completed matches yet.</p>
+        <% } else { %>
+        <div class="match-list">
+          <% matches.forEach((match)=> { %>
+          <a href="/replay/<%= match._id %>">
+            <strong><%= match.roomCode %></strong>
+            <span><%= match.draw ? "Draw" : `${match.winner} won` %></span>
+            <small><%= match.durationSeconds %>s</small>
+          </a>
+          <% }) %>
+        </div>
+        <% } %>
+      </section>
+    </main>
+  </body>
+</html>

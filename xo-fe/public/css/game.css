@@ -1,0 +1,152 @@
+.lobby-hero,
+.room-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.lobby-grid,
+.game-grid,
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.game-grid {
+  grid-template-columns: minmax(320px, 1fr) 360px;
+}
+
+.room-list,
+.match-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.room-card,
+.match-list a {
+  color: var(--ink);
+  text-decoration: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(84px, 120px));
+  gap: 10px;
+  justify-content: center;
+  margin: 2rem auto;
+}
+
+.cell {
+  aspect-ratio: 1;
+  width: 100%;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(2.25rem, 8vw, 3.4rem);
+  cursor: pointer;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 140ms ease, border 140ms ease;
+}
+
+.cell:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--brand);
+}
+
+.cell:disabled,
+.board.locked .cell {
+  cursor: not-allowed;
+}
+
+.actions,
+.invite-box,
+.chat-form {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.invite-box input,
+.chat-form input {
+  min-width: 0;
+}
+
+.side-panel {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.participant {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.chat {
+  height: 220px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  background: #fbfdff;
+}
+
+.chat p {
+  margin: 0 0 0.5rem;
+}
+
+.chat .system {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.profile-card img {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--line);
+}
+
+.moves {
+  display: inline-block;
+  text-align: left;
+}
+
+@media (max-width: 860px) {
+  .lobby-hero,
+  .room-top,
+  .actions,
+  .invite-box {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .lobby-grid,
+  .game-grid,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

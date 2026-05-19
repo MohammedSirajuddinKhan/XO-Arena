@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../partials/head") %>
+  <body>
+    <div class="auth-container">
+      <h2>Login</h2>
+
+      <form action="/login" method="POST">
+        <input type="text" name="username" placeholder="Username" required />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          required
+        />
+        <button class="btn">Login</button>
+      </form>
+
+      <form action="/guest" method="POST">
+        <button class="btn secondary" type="submit">Play as Guest</button>
+      </form>
+
+      <a href="/register">Register</a>
+    </div>
+  </body>
+</html>

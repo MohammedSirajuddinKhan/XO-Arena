@@ -1,0 +1,17 @@
+<nav class="navbar">
+  <a class="brand" href="/">XOArena</a>
+
+  <% if(currentPlayer){ %>
+  <div>
+    <a href="/lobby">Lobby</a>
+    <a href="/leaderboard">Leaderboard</a>
+    <% if(currentUser){ %>
+    <a href="/profile">Profile</a>
+    <% if(currentUser.isAdmin){ %>
+    <a href="/admin">Admin</a>
+    <% } %>
+    <% } %>
+    <a href="/logout">Logout</a>
+  </div>
+  <% } %>
+</nav>

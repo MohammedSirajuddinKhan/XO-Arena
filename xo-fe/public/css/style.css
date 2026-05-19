@@ -1,0 +1,165 @@
+:root {
+  --ink: #1f2933;
+  --muted: #667085;
+  --paper: #ffffff;
+  --line: #d9e2ec;
+  --brand: #1f7a8c;
+  --brand-dark: #14505c;
+  --accent: #f4b942;
+  --danger: #b42318;
+  --bg: #f6f8fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+a {
+  color: inherit;
+}
+
+.center,
+.lobby,
+.game-shell,
+.profile-page,
+.admin-page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.center {
+  text-align: center;
+}
+
+.lede {
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.eyebrow {
+  color: var(--brand);
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.btn {
+  background: var(--brand);
+  color: white;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.btn:hover {
+  background: var(--brand-dark);
+  transform: translateY(-1px);
+}
+
+.btn.secondary {
+  background: #344054;
+}
+
+.btn.danger {
+  background: var(--danger);
+}
+
+.navbar {
+  background: var(--ink);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  margin-right: 1rem;
+  font-weight: 600;
+}
+
+.navbar .brand {
+  color: var(--accent);
+  font-size: 1.2rem;
+}
+
+.panel,
+.profile-card,
+.room-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.empty,
+.muted {
+  color: var(--muted);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--paper);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th,
+td {
+  padding: 0.85rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.badge {
+  background: #e6f4f1;
+  color: var(--brand-dark);
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  font-weight: 700;
+}
+
+.toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  background: var(--ink);
+  color: white;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+}
+
+@media (max-width: 720px) {
+  .navbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .center,
+  .lobby,
+  .game-shell,
+  .profile-page,
+  .admin-page {
+    padding: 1rem;
+  }
+}

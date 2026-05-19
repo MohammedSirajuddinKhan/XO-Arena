@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../partials/head") %>
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <main class="game-shell">
+      <section class="room-top">
+        <div>
+          <p class="eyebrow">Room <%= room.roomCode %></p>
+          <h1 id="statusText"><%= room.status %></h1>
+          <p id="turn">Turn: <%= room.turn %></p>
+          <p id="timer">Timer: --</p>
+        </div>
+        <div class="invite-box">
+          <input id="inviteLink" value="" readonly />
+          <button id="copyInviteBtn" class="btn secondary" type="button">Copy Invite</button>
+        </div>
+      </section>
+
+      <section class="game-grid">
+        <div>
+          <div id="board" class="board">
+            <% room.board.forEach((cell,index)=> { %>
+            <button class="cell" data-index="<%= index %>" type="button"><%= cell %></button>
+            <% }) %>
+          </div>
+
+          <div class="actions">
+            <button id="restartBtn" class="btn" type="button">Restart Match</button>
+            <button id="rematchBtn" class="btn secondary" type="button">Rematch</button>
+          </div>
+        </div>
+
+        <aside class="side-panel">
+          <h2>Players</h2>
+          <div id="players"></div>
+          <h2>Spectators</h2>
+          <div id="spectators" class="muted"></div>
+          <h2>Chat</h2>
+          <div id="chatMessages" class="chat"></div>
+          <form id="chatForm" class="chat-form">
+            <input id="chatInput" placeholder="Message or emoji" maxlength="180" />
+            <button class="btn" type="submit">Send</button>
+          </form>
+        </aside>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" hidden></div>
+
+    <script>
+      const ROOM_CODE = "<%= room.roomCode %>";
+      const PLAYER_NAME = "<%= (currentUser && currentUser.username) || (guestUser && guestUser.username) || 'Player' %>";
+      const USER_ID = "<%= currentUser ? currentUser._id : '' %>";
+    </script>
+    <script src="/js/socket.js"></script>
+    <script src="/js/game.js"></script>
+  </body>
+</html>

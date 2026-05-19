@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../partials/head") %>
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <main class="center">
+      <h1>Replay <%= game.roomCode %></h1>
+      <p><%= game.draw ? "Draw" : `${game.winner} won` %> · <%= game.durationSeconds %>s</p>
+
+      <div class="board replay-board">
+        <% game.finalBoard.forEach((cell,index)=> { %>
+        <div class="cell" data-index="<%= index %>"><%= cell %></div>
+        <% }) %>
+      </div>
+
+      <ol class="moves">
+        <% game.moves.forEach((move)=> { %>
+        <li><%= move.player %> placed <%= move.symbol %> at <%= Number(move.index) + 1 %></li>
+        <% }) %>
+      </ol>
+    </main>
+  </body>
+</html>

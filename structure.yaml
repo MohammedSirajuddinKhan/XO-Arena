@@ -1,74 +1,76 @@
-GridLock/
-│
-├── config/
-│   ├── db.js
-│   ├── passport.js
-│   ├── socket.js
-│
-├── controllers/
-│   ├── authController.js
-│   ├── gameController.js
-│   └── userController.js
-│
-├── models/
-│   ├── User.js
-│   ├── Game.js
-│   └── Room.js
-│
-├── routes/
-│   ├── authRoutes.js
-│   ├── gameRoutes.js
-│   └── userRoutes.js
-│
-├── middlewares/
-│   ├── authMiddleware.js
-│   ├── errorMiddleware.js
-│   └── uploadMiddleware.js
-│
-├── public/
-│   ├── css/
-│   │   ├── style.css
-│   │   ├── auth.css
-│   │   └── game.css
-│   │
-│   ├── js/
-│   │   ├── main.js
-│   │   ├── socket.js
-│   │   └── game.js
-│   │
-│   ├── images/
-│   │   └── favicon.svg
-│
-├── services/
-│   ├── gameLogic.js
-│   └── roomService.js
-│
-├── utils/
-│   ├── generateRoomCode.js
-│   ├── calculateWinner.js
-│   └── asyncHandler.js
-│
-├── views/
-│   ├── partials/
-│   │   ├── navbar.ejs
-│   │   ├── footer.ejs
-│   │   └── head.ejs
-│   │
-│   ├── auth/
-│   │   ├── login.ejs
-│   │   └── register.ejs
-│   │
-│   ├── game/
-│   │   ├── lobby.ejs
-│   │   ├── room.ejs
-│   │   └── leaderboard.ejs
-│   │
-│   ├── index.ejs
-│   └── error.ejs
-│
-├── .env
-├── .gitignore
-├── app.js
-├── server.js
-├── package.json
-├── README.md
+XOArena/
+  xo-fe/
+    public/
+      css/
+        auth.css
+        game.css
+        style.css
+      images/
+        favicon.svg
+      js/
+        game.js
+        main.js
+        socket.js
+    views/
+      admin/
+        dashboard.ejs
+      auth/
+        login.ejs
+        register.ejs
+      game/
+        leaderboard.ejs
+        lobby.ejs
+        replay.ejs
+        room.ejs
+      partials/
+        footer.ejs
+        head.ejs
+        navbar.ejs
+      user/
+        profile.ejs
+      error.ejs
+      index.ejs
+  xo-be/
+    api/
+      index.js
+    config/
+      db.js
+      passport.js
+      socket.js
+    controllers/
+      adminController.js
+      authController.js
+      gameController.js
+      userController.js
+    middlewares/
+      adminMiddleware.js
+      authMiddleware.js
+      errorMiddleware.js
+      uploadMiddleware.js
+    models/
+      Game.js
+      Room.js
+      User.js
+    routes/
+      adminRoutes.js
+      authRoutes.js
+      gameRoutes.js
+      userRoutes.js
+    scripts/
+      check-syntax.js
+    services/
+      gameLogic.js
+      matchService.js
+      rankingService.js
+      roomService.js
+    utils/
+      asyncHandler.js
+      calculateWinner.js
+      generateRoomCode.js
+      profanityFilter.js
+      sanitizeInput.js
+    app.js
+    server.js
+    package.json
+    package-lock.json
+    vercel.json

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("../partials/head") %>
+  <body>
+    <%- include("../partials/navbar") %>
+
+    <main class="center leaderboard">
+      <h1>Leaderboard</h1>
+      <% if(users.length === 0){ %>
+      <p class="empty">No ranked players yet.</p>
+      <% } else { %>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Player</th>
+            <th>Badge</th>
+            <th>ELO</th>
+            <th>W-L-D</th>
+            <th>Win Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach((user,index)=> { 
+            const played = user.wins + user.losses + user.draws;
+            const winRate = played ? Math.round((user.wins / played) * 100) : 0;
+          %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= user.username %></td>
+            <td><span class="badge"><%= getRankBadge(user.elo) %></span></td>
+            <td><%= user.elo %></td>
+            <td><%= user.wins %>-<%= user.losses %>-<%= user.draws %></td>
+            <td><%= winRate %>%</td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <% } %>
+    </main>
+  </body>
+</html>
