@@ -12,22 +12,27 @@ process.on("uncaughtException", (error) => {
 const app = require("./app");
 
 const server = http.createServer(app);
+const socketOrigin = process.env.SOCKET_CORS_ORIGIN || process.env.CLIENT_ORIGIN || "*";
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_ORIGIN || "*",
+    origin: socketOrigin,
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
 require("./config/socket")(io);
 
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || "::";
 
 server.on("error", (error) => {
   console.error("Server error:", error.message);
 });
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+server.listen(PORT, HOST, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Chrome-safe URL: http://127.0.0.1:${PORT}`);
+  console.log(`Listening on ${HOST}:${PORT}`);
 });

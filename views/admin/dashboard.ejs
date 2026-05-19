@@ -26,7 +26,7 @@
             <tr>
               <td><%= room.roomCode %></td>
               <td><%= room.status %></td>
-              <td><%= room.players.map((player)=>player.name).join(", ") || "None" %></td>
+              <td><%= room.players.map((player)=>player.name || "Player").join(", ") || "None" %></td>
               <td>
                 <form action="/admin/rooms/<%= room._id %>/delete" method="POST">
                   <button class="btn danger" type="submit">Delete</button>
@@ -68,7 +68,7 @@
         <h2>Recent Matches</h2>
         <div class="match-list">
           <% finishedMatches.forEach((match)=> { %>
-          <a href="/replay/<%= match._id %>"><%= match.roomCode %> · <%= match.draw ? "Draw" : `${match.winner} won` %></a>
+          <a href="/replay/<%= match._id %>"><%= match.roomCode %> · <%= match.draw ? "Draw" : `${match.winner || "Unknown player"} won` %></a>
           <% }) %>
         </div>
       </section>

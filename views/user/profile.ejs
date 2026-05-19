@@ -31,7 +31,7 @@
           <% matches.forEach((match)=> { %>
           <a href="/replay/<%= match._id %>">
             <strong><%= match.roomCode %></strong>
-            <span><%= match.draw ? "Draw" : `${match.winner} won` %></span>
+            <span><%= match.draw ? "Draw" : `${match.winner || "Unknown player"} won` %></span>
             <small><%= match.durationSeconds %>s</small>
           </a>
           <% }) %>

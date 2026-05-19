@@ -64,6 +64,14 @@ Open:
 http://localhost:3000
 ```
 
+If Chrome or another browser tries to force HTTPS, use the explicit IPv4 URL:
+
+```txt
+http://127.0.0.1:3000
+```
+
+Do not open `https://localhost:3000`; the local development server is HTTP-only.
+
 ## Scripts
 
 ```bash

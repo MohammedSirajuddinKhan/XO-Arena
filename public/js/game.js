@@ -13,8 +13,12 @@ const inviteLink = document.getElementById("inviteLink");
 let currentRoom = null;
 let countdownInterval = null;
 
+function display(value, fallback = "") {
+  return value === undefined || value === null || value === "" ? fallback : value;
+}
+
 function showToast(message) {
-  toast.textContent = message;
+  toast.textContent = display(message, "Something happened");
   toast.hidden = false;
   setTimeout(() => {
     toast.hidden = true;
@@ -22,29 +26,29 @@ function showToast(message) {
 }
 
 function ownSymbol(room) {
-  const player = room.players.find((candidate) => candidate.name === PLAYER_NAME);
+  const player = (room.players || []).find((candidate) => candidate.name === PLAYER_NAME);
   return player?.symbol;
 }
 
 function renderParticipants(room) {
-  players.innerHTML = room.players
+  players.innerHTML = (room.players || [])
     .map(
       (player) =>
-        `<div class="participant"><strong>${player.symbol}: ${player.name}</strong><span>${player.online ? "online" : "offline"}</span></div>`,
+        `<div class="participant"><strong>${display(player.symbol, "?")}: ${display(player.name, "Player")}</strong><span>${player.online ? "online" : "offline"}</span></div>`,
     )
     .join("");
 
-  spectators.textContent = room.spectators.length
-    ? room.spectators.map((spectator) => spectator.name).join(", ")
+  spectators.textContent = (room.spectators || []).length
+    ? room.spectators.map((spectator) => display(spectator.name, "Spectator")).join(", ")
     : "No spectators";
 }
 
 function renderChat(room) {
-  chatMessages.innerHTML = room.chat
+  chatMessages.innerHTML = (room.chat || [])
     .slice(-40)
     .map(
       (message) =>
-        `<p class="${message.type === "system" ? "system" : ""}"><strong>${message.sender}</strong>: ${message.message}</p>`,
+        `<p class="${message.type === "system" ? "system" : ""}"><strong>${display(message.sender, "System")}</strong>: ${display(message.message, "")}</p>`,
     )
     .join("");
   chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -69,7 +73,8 @@ function renderTimer(room) {
 
 function renderRoom(room) {
   currentRoom = room;
-  room.board.forEach((value, index) => {
+  const roomBoard = Array.isArray(room.board) ? room.board : Array(9).fill("");
+  roomBoard.forEach((value, index) => {
     cells[index].textContent = value;
     cells[index].disabled =
       value ||
@@ -79,8 +84,8 @@ function renderRoom(room) {
       ownSymbol(room) !== room.turn;
   });
 
-  statusText.textContent = room.draw ? "Draw" : room.winner ? `${room.winner} wins` : room.status;
-  turn.textContent = `Turn: ${room.turn}`;
+  statusText.textContent = room.draw ? "Draw" : room.winner ? `${room.winner} wins` : display(room.status, "waiting");
+  turn.textContent = `Turn: ${display(room.turn, "-")}`;
   board.classList.toggle("locked", ownSymbol(room) !== room.turn || room.status !== "active");
   renderParticipants(room);
   renderChat(room);
@@ -132,8 +137,10 @@ chatForm.addEventListener("submit", (event) => {
 socket.on("update-room", renderRoom);
 socket.on("chat-message", (message) => {
   if (!currentRoom) return;
+  currentRoom.chat ||= [];
   currentRoom.chat.push(message);
   renderChat(currentRoom);
 });
-socket.on("player-joined", ({ player }) => showToast(`${player} joined`));
-socket.on("player-left", ({ player }) => showToast(`${player} left`));
+socket.on("player-joined", ({ player }) => showToast(`${display(player, "Player")} joined`));
+socket.on("player-left", ({ player }) => showToast(`${display(player, "Player")} left`));
+socket.on("socket-error", ({ message }) => showToast(display(message, "Something went wrong")));

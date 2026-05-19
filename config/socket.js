@@ -12,6 +12,12 @@ function logSocketError(event, error) {
   console.error(`Socket event failed (${event}):`, error);
 }
 
+function normalizeRoomCode(value) {
+  const roomCode = sanitizeInput(value, 12).toUpperCase();
+  if (!roomCode || roomCode === "UNDEFINED" || roomCode === "NULL") return "";
+  return roomCode;
+}
+
 function normalizePlayers(room) {
   room.players = room.players.map((player, index) => {
     if (typeof player === "string") {
@@ -31,6 +37,12 @@ function publicRoom(room) {
   const doc = room.toObject ? room.toObject() : room;
   return {
     ...doc,
+    players: doc.players || [],
+    spectators: doc.spectators || [],
+    board: Array.isArray(doc.board) ? doc.board : Array(9).fill(""),
+    chat: doc.chat || [],
+    turn: doc.turn || "X",
+    status: doc.status || "waiting",
     turnSeconds: TURN_SECONDS,
   };
 }
@@ -115,8 +127,12 @@ module.exports = function (io) {
       });
     };
 
-    safeSocketHandler("join-room", async ({ roomCode, player, userId }) => {
-      roomCode = sanitizeInput(roomCode, 12).toUpperCase();
+    safeSocketHandler("join-room", async ({ roomCode = "", player = "", userId = "" } = {}) => {
+      roomCode = normalizeRoomCode(roomCode);
+      if (!roomCode) {
+        socket.emit("socket-error", { message: "Invalid room link. Please create or join a room again." });
+        return;
+      }
       player = sanitizeInput(player, 32) || "Player";
 
       let room = await Room.findOne({ roomCode });
@@ -178,8 +194,9 @@ module.exports = function (io) {
       io.to(roomCode).emit("update-room", publicRoom(room));
     });
 
-    safeSocketHandler("make-move", async ({ roomCode, index, symbol, player }) => {
-      roomCode = sanitizeInput(roomCode, 12).toUpperCase();
+    safeSocketHandler("make-move", async ({ roomCode = "", index, symbol, player = "" } = {}) => {
+      roomCode = normalizeRoomCode(roomCode);
+      if (!roomCode) return;
       player = sanitizeInput(player, 32);
       index = Number(index);
 
@@ -229,7 +246,8 @@ module.exports = function (io) {
     });
 
     safeSocketHandler("restart-game", async (roomCode) => {
-      roomCode = sanitizeInput(roomCode, 12).toUpperCase();
+      roomCode = normalizeRoomCode(roomCode);
+      if (!roomCode) return;
       const room = await Room.findOne({ roomCode });
 
       if (!room) return;
@@ -247,8 +265,9 @@ module.exports = function (io) {
       io.to(roomCode).emit("update-room", publicRoom(room));
     });
 
-    safeSocketHandler("request-rematch", async ({ roomCode, player }) => {
-      roomCode = sanitizeInput(roomCode, 12).toUpperCase();
+    safeSocketHandler("request-rematch", async ({ roomCode = "", player = "" } = {}) => {
+      roomCode = normalizeRoomCode(roomCode);
+      if (!roomCode) return;
       player = sanitizeInput(player, 32);
       const room = await Room.findOne({ roomCode });
       if (!room || room.status !== "finished") return;
@@ -271,8 +290,9 @@ module.exports = function (io) {
       io.to(roomCode).emit("update-room", publicRoom(room));
     });
 
-    safeSocketHandler("room-chat", async ({ roomCode, player, message }) => {
-      roomCode = sanitizeInput(roomCode, 12).toUpperCase();
+    safeSocketHandler("room-chat", async ({ roomCode = "", player = "", message = "" } = {}) => {
+      roomCode = normalizeRoomCode(roomCode);
+      if (!roomCode) return;
       player = sanitizeInput(player, 32) || "Player";
       message = filterProfanity(sanitizeInput(message, 180));
       if (!message) return;

@@ -47,6 +47,10 @@ exports.createRoom = async (req, res) => {
 exports.joinRoom = async (req, res) => {
   const roomCode = sanitizeInput(req.body.roomCode, 12).toUpperCase();
 
+  if (!roomCode || roomCode === "UNDEFINED" || roomCode === "NULL") {
+    return res.redirect("/lobby");
+  }
+
   const room = await Room.findOne({ roomCode });
 
   if (!room) {
@@ -57,8 +61,14 @@ exports.joinRoom = async (req, res) => {
 };
 
 exports.getRoom = async (req, res) => {
+  const roomCode = sanitizeInput(req.params.roomCode, 12).toUpperCase();
+
+  if (!roomCode || roomCode === "UNDEFINED" || roomCode === "NULL") {
+    return res.redirect("/lobby");
+  }
+
   const room = await Room.findOne({
-    roomCode: req.params.roomCode,
+    roomCode,
   });
 
   if (!room) {

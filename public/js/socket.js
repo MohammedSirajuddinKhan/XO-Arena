@@ -4,16 +4,22 @@ const socket = io({
   reconnectionDelay: 500,
 });
 
-socket.emit("join-room", {
-  roomCode: ROOM_CODE,
-  player: PLAYER_NAME,
-  userId: USER_ID,
-});
+function hasValidRoomValue(value) {
+  return value && value !== "undefined" && value !== "null";
+}
 
 socket.on("connect", () => {
+  const roomCode = typeof ROOM_CODE === "undefined" ? "" : ROOM_CODE;
+  const playerName = typeof PLAYER_NAME === "undefined" ? "" : PLAYER_NAME;
+  const userId = typeof USER_ID === "undefined" ? "" : USER_ID;
+
+  if (!hasValidRoomValue(roomCode)) {
+    return;
+  }
+
   socket.emit("join-room", {
-    roomCode: ROOM_CODE,
-    player: PLAYER_NAME,
-    userId: USER_ID,
+    roomCode,
+    player: hasValidRoomValue(playerName) ? playerName : "Player",
+    userId: hasValidRoomValue(userId) ? userId : "",
   });
 });
