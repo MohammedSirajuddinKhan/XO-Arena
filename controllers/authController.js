@@ -1,5 +1,24 @@
 const passport = require("passport");
 
+const ADMIN_USERNAME = "admin@xo";
+const ADMIN_PASSWORD = "admin@xo";
+
+function redirectAfterLogin(user, res) {
+  res.redirect(user.isAdmin ? "/admin" : "/lobby");
+}
+
+function loginExistingUser(req, res, next, redirect) {
+  passport.authenticate("local", (err, user) => {
+    if (err) return next(err);
+    if (!user || user.isBanned) return res.redirect("/login");
+
+    req.logIn(user, (loginErr) => {
+      if (loginErr) return next(loginErr);
+      redirect(user, res);
+    });
+  })(req, res, next);
+}
+
 exports.getLogin = (req, res) => {
   res.render("auth/login");
 };
@@ -13,12 +32,16 @@ exports.registerUser = async (req, res, next) => {
     const User = require("../models/User");
     const { username, password } = req.body;
 
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+      return loginExistingUser(req, res, next, redirectAfterLogin);
+    }
+
     const user = new User({ username });
 
     await User.register(user, password);
 
     passport.authenticate("local")(req, res, () => {
-      res.redirect("/lobby");
+      redirectAfterLogin(user, res);
     });
   } catch (error) {
     console.log(error);
@@ -27,15 +50,7 @@ exports.registerUser = async (req, res, next) => {
 };
 
 exports.loginUser = (req, res, next) => {
-  passport.authenticate("local", (err, user) => {
-    if (err) return next(err);
-    if (!user || user.isBanned) return res.redirect("/login");
-
-    req.logIn(user, (loginErr) => {
-      if (loginErr) return next(loginErr);
-      res.redirect("/lobby");
-    });
-  })(req, res, next);
+  loginExistingUser(req, res, next, redirectAfterLogin);
 };
 
 exports.guestLogin = (req, res) => {
