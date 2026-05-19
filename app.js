@@ -24,6 +24,20 @@ const app = express();
 connectDB();
 passportConfig();
 
+let sessionStore;
+if (process.env.MONGO_URI) {
+  sessionStore = MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    crypto: {
+      secret: process.env.SESSION_SECRET || "xoarena-dev-secret",
+    },
+  });
+
+  sessionStore.on("error", (error) => {
+    console.error("Session store error:", error.message);
+  });
+}
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -67,9 +81,7 @@ app.use(
     secret: process.env.SESSION_SECRET || "xoarena-dev-secret",
     resave: false,
     saveUninitialized: false,
-    store: process.env.MONGO_URI
-      ? MongoStore.create({ mongoUrl: process.env.MONGO_URI })
-      : undefined,
+    store: sessionStore,
     cookie: {
       httpOnly: true,
       sameSite: "lax",
@@ -90,6 +102,13 @@ app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   next();
+});
+
+app.get("/healthz", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    uptime: process.uptime(),
+  });
 });
 
 app.use("/", authRoutes);

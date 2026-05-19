@@ -3,16 +3,17 @@ const router = express.Router();
 
 const gameController = require("../controllers/gameController");
 const isLoggedIn = require("../middlewares/authMiddleware");
+const asyncHandler = require("../utils/asyncHandler");
 
 router.get("/", gameController.getHome);
 
-router.get("/lobby", isLoggedIn, gameController.getLobby);
-router.post("/create-room", isLoggedIn, gameController.createRoom);
-router.post("/join-room", isLoggedIn, gameController.joinRoom);
+router.get("/lobby", isLoggedIn, asyncHandler(gameController.getLobby));
+router.post("/create-room", isLoggedIn, asyncHandler(gameController.createRoom));
+router.post("/join-room", isLoggedIn, asyncHandler(gameController.joinRoom));
 
-router.get("/room/:roomCode", isLoggedIn, gameController.getRoom);
+router.get("/room/:roomCode", isLoggedIn, asyncHandler(gameController.getRoom));
 
-router.get("/leaderboard", isLoggedIn, gameController.getLeaderboard);
-router.get("/replay/:gameId", isLoggedIn, gameController.getReplay);
+router.get("/leaderboard", isLoggedIn, asyncHandler(gameController.getLeaderboard));
+router.get("/replay/:gameId", isLoggedIn, asyncHandler(gameController.getReplay));
 
 module.exports = router;

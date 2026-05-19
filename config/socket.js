@@ -8,6 +8,10 @@ const filterProfanity = require("../utils/profanityFilter");
 const TURN_SECONDS = Number(process.env.TURN_SECONDS || 30);
 const roomTimers = new Map();
 
+function logSocketError(event, error) {
+  console.error(`Socket event failed (${event}):`, error);
+}
+
 function normalizePlayers(room) {
   room.players = room.players.map((player, index) => {
     if (typeof player === "string") {
@@ -44,20 +48,24 @@ function scheduleTurnTimeout(io, room) {
 
   const remaining = Math.max(0, new Date(room.turnEndsAt).getTime() - Date.now());
   const timer = setTimeout(async () => {
-    const latest = await Room.findOne({ roomCode: room.roomCode });
-    if (!latest || latest.status !== "active" || latest.winner || latest.draw) return;
+    try {
+      const latest = await Room.findOne({ roomCode: room.roomCode });
+      if (!latest || latest.status !== "active" || latest.winner || latest.draw) return;
 
-    latest.turn = latest.turn === "X" ? "O" : "X";
-    latest.turnStartedAt = new Date();
-    latest.turnEndsAt = new Date(Date.now() + TURN_SECONDS * 1000);
-    latest.chat.push({
-      sender: "XOArena",
-      message: "Turn timed out.",
-      type: "system",
-    });
-    await latest.save();
-    scheduleTurnTimeout(io, latest);
-    emitRoom(io, latest.roomCode);
+      latest.turn = latest.turn === "X" ? "O" : "X";
+      latest.turnStartedAt = new Date();
+      latest.turnEndsAt = new Date(Date.now() + TURN_SECONDS * 1000);
+      latest.chat.push({
+        sender: "XOArena",
+        message: "Turn timed out.",
+        type: "system",
+      });
+      await latest.save();
+      scheduleTurnTimeout(io, latest);
+      await emitRoom(io, latest.roomCode);
+    } catch (error) {
+      logSocketError("turn-timeout", error);
+    }
   }, remaining);
 
   roomTimers.set(room.roomCode, timer);
@@ -94,7 +102,20 @@ module.exports = function (io) {
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
 
-    socket.on("join-room", async ({ roomCode, player, userId }) => {
+    const safeSocketHandler = (event, handler) => {
+      socket.on(event, async (...args) => {
+        try {
+          await handler(...args);
+        } catch (error) {
+          logSocketError(event, error);
+          socket.emit("socket-error", {
+            message: "Something went wrong. Please try again.",
+          });
+        }
+      });
+    };
+
+    safeSocketHandler("join-room", async ({ roomCode, player, userId }) => {
       roomCode = sanitizeInput(roomCode, 12).toUpperCase();
       player = sanitizeInput(player, 32) || "Player";
 
@@ -157,7 +178,7 @@ module.exports = function (io) {
       io.to(roomCode).emit("update-room", publicRoom(room));
     });
 
-    socket.on("make-move", async ({ roomCode, index, symbol, player }) => {
+    safeSocketHandler("make-move", async ({ roomCode, index, symbol, player }) => {
       roomCode = sanitizeInput(roomCode, 12).toUpperCase();
       player = sanitizeInput(player, 32);
       index = Number(index);
@@ -207,7 +228,7 @@ module.exports = function (io) {
       io.to(roomCode).emit("update-room", publicRoom(room));
     });
 
-    socket.on("restart-game", async (roomCode) => {
+    safeSocketHandler("restart-game", async (roomCode) => {
       roomCode = sanitizeInput(roomCode, 12).toUpperCase();
       const room = await Room.findOne({ roomCode });
 
@@ -226,7 +247,7 @@ module.exports = function (io) {
       io.to(roomCode).emit("update-room", publicRoom(room));
     });
 
-    socket.on("request-rematch", async ({ roomCode, player }) => {
+    safeSocketHandler("request-rematch", async ({ roomCode, player }) => {
       roomCode = sanitizeInput(roomCode, 12).toUpperCase();
       player = sanitizeInput(player, 32);
       const room = await Room.findOne({ roomCode });
@@ -250,7 +271,7 @@ module.exports = function (io) {
       io.to(roomCode).emit("update-room", publicRoom(room));
     });
 
-    socket.on("room-chat", async ({ roomCode, player, message }) => {
+    safeSocketHandler("room-chat", async ({ roomCode, player, message }) => {
       roomCode = sanitizeInput(roomCode, 12).toUpperCase();
       player = sanitizeInput(player, 32) || "Player";
       message = filterProfanity(sanitizeInput(message, 180));
@@ -265,7 +286,7 @@ module.exports = function (io) {
       io.to(roomCode).emit("chat-message", room.chat[room.chat.length - 1]);
     });
 
-    socket.on("disconnect", async () => {
+    safeSocketHandler("disconnect", async () => {
       const rooms = await Room.find({
         $or: [{ "players.socketId": socket.id }, { "spectators.socketId": socket.id }],
       });
@@ -286,7 +307,7 @@ module.exports = function (io) {
             });
             await room.save();
             socket.to(room.roomCode).emit("player-left", { player: participant.name });
-            emitRoom(io, room.roomCode);
+            await emitRoom(io, room.roomCode);
           }
         }),
       );
